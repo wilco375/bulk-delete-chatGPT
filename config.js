@@ -138,7 +138,6 @@ if (typeof window.configLoaded === "undefined") {
   };
 
   // Export to global scope
-  window.API_CONFIG = API_CONFIG;
   window.UI_CONFIG = UI_CONFIG;
   window.STORAGE_CONFIG = STORAGE_CONFIG;
   window.CSS_CLASSES = CSS_CLASSES;
