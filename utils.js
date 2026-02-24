@@ -160,68 +160,12 @@ if (typeof window.utilsLoaded === "undefined") {
     }
   };
 
-  // API utilities
-  const APIUtils = {
-    // Generic API call with error handling
-    async makeRequest(endpoint, options = {}) {
-      try {
-        const url = `${API_CONFIG.BASE_URL}${endpoint}`;
-        const response = await fetch(url, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          ...options
-        });
-
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        return await response.json();
-      } catch (error) {
-        console.error(`API request failed for ${endpoint}:`, error);
-        throw error;
-      }
-    },
-
-    // Send analytics event
-    async sendEvent(action, count) {
-      try {
-        const userInfo = await ChromeUtils.getUserInfo();
-        const data = {
-          user_id: userInfo.id || "unknown",
-          timestamp: CommonUtils.generateTimestamp(),
-          action: action,
-          count: count
-        };
-
-        await this.makeRequest(API_CONFIG.ENDPOINTS.SEND_EVENT, {
-          method: 'POST',
-          body: JSON.stringify(data)
-        });
-
-        console.log(`Event '${action}' sent successfully`);
-      } catch (error) {
-        console.error(`Error sending '${action}' event:`, error);
-      }
-    },
-
-    // Check payment status
-    async checkPaymentStatus(userId) {
-      const endpoint = `${API_CONFIG.ENDPOINTS.CHECK_PAYMENT}?user_id=${encodeURIComponent(userId)}`;
-      return await this.makeRequest(endpoint);
-    }
-  };
-
   // Export to global scope
   window.CommonUtils = CommonUtils;
   window.ChromeUtils = ChromeUtils;
-  window.APIUtils = APIUtils;
 
   // For backward compatibility
   window.getUserInfo = ChromeUtils.getUserInfo;
-  window.sendEventAsync = APIUtils.sendEvent;
 
 } else {
   console.log("utils.js already loaded, skipping re-initialization");

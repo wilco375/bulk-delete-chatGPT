@@ -16,9 +16,6 @@ if (typeof window.conversationHandlerLoaded === "undefined") {
 
       console.log(`Selected conversations for ${operation}:`, selectedConversations.length);
       
-      // Send analytics event
-      await APIUtils.sendEvent(EVENTS[operation.toUpperCase()], selectedConversations.length);
-
       let processedCount = 0;
       let skippedCount = 0;
 

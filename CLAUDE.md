@@ -62,8 +62,6 @@ This extension has no build system - files are loaded directly. Changes to any `
 ### Chrome Extension Permissions
 - `scripting`: To inject content scripts
 - `activeTab`: To access current tab content
-- `identity`, `identity.email`: For user authentication (premium features)
-- Host permission for `bulk-delete-chatgpt-worker.qcrao.com`
 
 ### ChatGPT UI Integration
 - Uses mouse events (`mouseover`, `pointer down`) to trigger ChatGPT's context menus

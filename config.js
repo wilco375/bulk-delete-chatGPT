@@ -3,17 +3,6 @@ if (typeof window.configLoaded === "undefined") {
 
   window.configLoaded = true;
 
-  // API Configuration
-  const API_CONFIG = {
-    BASE_URL: "https://bulk-delete-chatgpt-worker.qcrao.com",
-    ENDPOINTS: {
-      SEND_EVENT: "/send-event",
-      CHECK_PAYMENT: "/check-payment-status",
-      PAY_BULK_ARCHIVE: "/pay-bulk-archive"
-    },
-    TIMEOUT: 10000
-  };
-
   // UI Configuration
   const UI_CONFIG = {
     DELAYS: {

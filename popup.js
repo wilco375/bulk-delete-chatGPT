@@ -91,50 +91,6 @@ function initializeButtons() {
   bulkArchiveButton.addEventListener("click", handleBulkArchive);
 }
 
-// Membership management
-const MembershipManager = {
-  storageKey: "BulkDeleteChatGPT_isPaid",
-  
-  getLocalStatus() {
-    return localStorage.getItem(this.storageKey) === "true";
-  },
-  
-  setLocalStatus(isPaid) {
-    localStorage.setItem(this.storageKey, isPaid.toString());
-  },
-  
-  async checkRemoteStatus(userInfo) {
-    try {
-      const response = await fetch(
-        `https://bulk-delete-chatgpt-worker.qcrao.com/check-payment-status?user_id=${encodeURIComponent(userInfo.id)}`
-      );
-      return await response.json();
-    } catch (error) {
-      console.error("Error checking remote membership status:", error);
-      throw error;
-    }
-  },
-  
-  async checkMembershipStatus() {
-    const localIsPaid = this.getLocalStatus();
-    updateBulkArchiveButton(localIsPaid);
-
-    try {
-      const userInfo = await getUserInfo();
-      if (!userInfo) {
-        console.error("Unable to get user info");
-        return;
-      }
-
-      const data = await this.checkRemoteStatus(userInfo);
-      this.setLocalStatus(data.isPaid);
-      updateBulkArchiveButton(data.isPaid);
-    } catch (error) {
-      console.error("Error in membership status check:", error);
-    }
-  }
-};
-
 function updateBulkArchiveButton(isPaid) {
   const bulkArchiveButton = document.getElementById("bulk-archive");
   if (isPaid) {
@@ -146,32 +102,7 @@ function updateBulkArchiveButton(isPaid) {
 
 async function handleBulkArchive() {
   try {
-    const localIsPaid = MembershipManager.getLocalStatus();
-    
-    if (localIsPaid) {
-      executeArchiveOperation();
-      return;
-    }
-
-    const userInfo = await getUserInfo();
-    if (!userInfo) {
-      console.error("Unable to get user info");
-      alert("Unable to verify user. Please try again later.");
-      return;
-    }
-
-    const data = await MembershipManager.checkRemoteStatus(userInfo);
-    MembershipManager.setLocalStatus(data.isPaid);
-    updateBulkArchiveButton(data.isPaid);
-
-    if (data.isPaid) {
-      executeArchiveOperation();
-    } else {
-      const userConfirmed = await showModal();
-      if (userConfirmed) {
-        await handlePayment(userInfo);
-      }
-    }
+    executeArchiveOperation();
   } catch (error) {
     console.error("Error in bulk archive handler:", error);
     alert("An error occurred. Please try again later.");
@@ -187,25 +118,6 @@ function executeArchiveOperation() {
       loadGlobalsThenExecute(tab.id, "bulkArchiveConversations.js");
     }
   });
-}
-
-async function handlePayment(userInfo) {
-  try {
-    const payResponse = await fetch(
-      `https://bulk-delete-chatgpt-worker.qcrao.com/pay-bulk-archive?user_id=${encodeURIComponent(userInfo.id)}`,
-      { method: "POST" }
-    );
-    const payData = await payResponse.json();
-    
-    if (payData.paymentUrl) {
-      window.open(payData.paymentUrl, "_blank");
-    } else {
-      alert("Failed to get payment link. Please try again later.");
-    }
-  } catch (error) {
-    console.error("Error handling payment:", error);
-    alert("Payment processing failed. Please try again later.");
-  }
 }
 
 function showModal() {
@@ -234,13 +146,6 @@ function showModal() {
     };
   });
 }
-
-// function updateCopyrightYear() {
-//   const currentYear = new Date().getFullYear();
-//   document.getElementById(
-//     "copyright"
-//   ).innerHTML = `&copy; ${currentYear} <a href="https://github.com/qcrao/bulk-delete-chatGPT" target="_blank">qcrao@GitHub</a>`;
-// }
 
 async function loadVersion() {
   try {
